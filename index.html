@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myVisitorLog</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<!-- 추가해야할 사항 : 상단 헤더 아이콘,악성 url부분 없애고 밑에 오늘 날짜추가, 쪽지 보낸 시간, 오른쪽 헬로msg -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB205fCitEQ99Foz1WnFYeVNuFVX3SE4fE",
+        authDomain: "myvisitorlog-ea94c.firebaseapp.com",
+        projectId: "myvisitorlog-ea94c",
+        storageBucket: "myvisitorlog-ea94c.firebasestorage.app",
+        messagingSenderId: "680330750827",
+        appId: "1:680330750827:web:4ff3e4af644d9dd93a7a2e",
+        measurementId: "G-X4YRTW0ZNX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    let docs = await getDocs(collection(db, "visitors"));
+    docs.forEach((doc) => {
+        let row = doc.data();
+    });
+
+
+    function sendMessage() {
+        const chatDisplay = document.getElementById("chatDisplay");
+        const messageInput = document.getElementById("messageInput");
+
+        const message = messageInput.value.trim();
+
+        if (message) {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("message");
+
+            const profileImage = document.createElement("img");
+            profileImage.src = "https://i.ibb.co/kxHZ189/kyeongran-Carhartt.jpg";
+            profileImage.alt = "프로필 이미지";
+            profileImage.classList.add("profile-img");
+
+            const messageContent = document.createElement("div");
+            messageContent.classList.add("message-content");
+            messageContent.innerText = message;
+
+            messageElement.appendChild(profileImage);
+            messageElement.appendChild(messageContent);
+
+            chatDisplay.appendChild(messageElement);
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+
+            messageInput.value = "";
+        }
+    }
+
+    document.getElementById("messageInput").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
+
+</script>
+
+<body>
+    <div class="chat-window">
+        <!-- 상단 헤더 영역 -->
+        <div class="chat-header">
+            <span>네이트온</span>
+            <button class="close-btn">X</button>
+        </div>
+
+        <!-- 경고 메시지 -->
+        <div class="warning-message">
+            쪽지를 통해 전달되는 확인되지 않은 URL은 클릭 시 악성 프로그램에 연결될 수 있으므로 주의하시기 바랍니다.
+        </div>
+
+        <!-- 메시지 디스플레이 영역 -->
+        <div class="chat-display" id="chatDisplay">
+            <div class="message">
+                <img src="https://i.ibb.co/kxHZ189/kyeongran-Carhartt.jpg" alt="프로필 이미지" class="profile-img">
+                <div class="message-content">네이트온 대화 쪽지</div>
+            </div>
+            <div class="message">
+                <img src="https://i.ibb.co/kxHZ189/kyeongran-Carhartt.jpg" alt="프로필 이미지" class="profile-img">
+                <div class="message-content">뭐해요?</div>
+            </div>
+        </div>
+
+        <!-- 입력 및 전송 영역 -->
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="메세지를 입력하세요">
+            <button onclick="sendMessage()">보내기</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
