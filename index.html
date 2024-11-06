@@ -26,84 +26,106 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
 
-    let docs = await getDocs(collection(db, "visitors"));
-    docs.forEach((doc) => {
-        let row = doc.data();
-    });
+    async function loadMessages() {
+        const docs = await getDocs(collection(db, "visitors"));
+        docs.forEach((doc) => {
+            let row = doc.data();
+            displayMessage(row.content, row.timestamp, "yourMessage"); // 메시지 데이터와 시간을 화면에 추가
+        });
+    }
 
-
-    function sendMessage() {
-        const chatDisplay = document.getElementById("chatDisplay");
+    async function sendMessage() {
         const messageInput = document.getElementById("messageInput");
-
         const message = messageInput.value.trim();
 
-        if (message) {
-            const messageElement = document.createElement("div");
-            messageElement.classList.add("message");
+        if (message) { // 메시지가 빈 문자열이 아닌 경우에만 실행
+            // Firestore에 메시지 저장
+            await addDoc(collection(db, "visitors"), {
+                content: message,
+                timestamp: new Date().toISOString() // 타임스탬프를 ISO 형식으로 저장
+            });
 
-            const profileImage = document.createElement("img");
-            profileImage.src = "https://i.ibb.co/kxHZ189/kyeongran-Carhartt.jpg";
-            profileImage.alt = "프로필 이미지";
-            profileImage.classList.add("profile-img");
-
-            const messageContent = document.createElement("div");
-            messageContent.classList.add("message-content");
-            messageContent.innerText = message;
-
-            messageElement.appendChild(profileImage);
-            messageElement.appendChild(messageContent);
-
-            chatDisplay.appendChild(messageElement);
-            chatDisplay.scrollTop = chatDisplay.scrollHeight;
-
-            messageInput.value = "";
+            displayMessage(message, new Date().toLocaleTimeString(),  "yourMessage"); // 화면에 메시지 표시
+            messageInput.value = ""; // 입력 필드 초기화
         }
     }
 
+    // 메시지 DOM에 표시하는 함수
+    function displayMessage(content, time) {
+        const chatDisplay = document.getElementById("chatDisplay");
+
+        // 메시지 요소 생성
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message");
+
+        // 프로필 이미지 요소 생성
+        const profileImage = document.createElement("img");
+        profileImage.src = "https://i.ibb.co/kxHZ189/kyeongran-Carhartt.jpg";
+        profileImage.alt = "프로필 이미지";
+        profileImage.classList.add("profile-img");
+
+        // 메시지 내용 요소 생성
+        const messageContent = document.createElement("div");
+        messageContent.classList.add("message-content");
+        messageContent.innerText = content;
+
+        // 타임스탬프 요소 생성
+        const timestamp = document.createElement("span");
+        timestamp.classList.add("timestamp");
+        timestamp.innerText = time;
+
+        // 메시지 요소에 이미지, 내용, 타임스탬프 추가
+        messageElement.appendChild(profileImage);
+        messageElement.appendChild(messageContent);
+        messageElement.appendChild(timestamp);
+
+        // 화면에 메시지 추가 및 스크롤 위치 조정
+        chatDisplay.appendChild(messageElement);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
+    }
+
+    // 페이지가 로드될 때 Firestore에서 기존 메시지 로드
+    window.onload = loadMessages;
+
+    // 엔터키 입력 시 메시지 전송
     document.getElementById("messageInput").addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             sendMessage();
         }
     });
 
+    document.getElementById("sendbtn").addEventListener("click", sendMessage);
 </script>
 
 <body>
     <div class="chat-window">
         <!-- 상단 헤더 영역 -->
         <div class="chat-header">
-            <span>네이트온</span>
-            <button class="close-btn">X</button>
+            <div class="header-icon"><image src="https://i.ibb.co/nBZqWnT/image.jpg" alt="image" alt="header-icon" class="header-icon-image"></div>
+            <span>갱톡</span>
+            <button class="close-btn">닫기</button>
         </div>
 
-        <!-- 경고 메시지 -->
-        <div class="warning-message">
-            쪽지를 통해 전달되는 확인되지 않은 URL은 클릭 시 악성 프로그램에 연결될 수 있으므로 주의하시기 바랍니다.
+        <div class="notice-input">
+            만나서 반가워요! 메세지를 보내보세요.
         </div>
-
-        <!-- 메시지 디스플레이 영역 -->
+        
         <div class="chat-display" id="chatDisplay">
-            <div class="message">
+            <div class="message myMessage">
                 <img src="https://i.ibb.co/kxHZ189/kyeongran-Carhartt.jpg" alt="프로필 이미지" class="profile-img">
-                <div class="message-content">네이트온 대화 쪽지</div>
-            </div>
-            <div class="message">
-                <img src="https://i.ibb.co/kxHZ189/kyeongran-Carhartt.jpg" alt="프로필 이미지" class="profile-img">
-                <div class="message-content">뭐해요?</div>
+                <div class="message-content">안녕하세요!</div>
             </div>
         </div>
 
         <!-- 입력 및 전송 영역 -->
         <div class="chat-input">
             <input type="text" id="messageInput" placeholder="메세지를 입력하세요">
-            <button onclick="sendMessage()">보내기</button>
+            <button id="sendbtn">보내기</button>
         </div>
     </div>
 
-    <script src="script.js"></script>
 </body>
 
 </html>

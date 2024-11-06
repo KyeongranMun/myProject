@@ -9,7 +9,8 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
+    background-color: #f0e6f5; 
+    
 }
 
 .chat-window {
@@ -21,17 +22,24 @@ body {
 }
 
 .chat-header {
-    background-color: #acf3ff;
+    background-color: #f1acbb;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-weight: bold;
-    font-size: 14px;
-    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+    border-bottom: 1px solid #e6e3e3;
 }
 
-.warning-message {
+.header-icon {
+    width: 31px;
+    height: 31px;
+    border-radius: 70%;
+    overflow: hidden;
+}
+
+.notice-input {
     padding: 8px;
     font-size: 12px;
     color: #666;
@@ -44,12 +52,14 @@ body {
     overflow-y: auto;
     background-color: #f9f9f9;
     border-bottom: 1px solid #ddd;
+    overflow: scroll;
 }
 
 .message {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    position: relative; /* 타임스탬프 위치 조정을 위해 추가 */
 }
 
 .profile-img {
@@ -65,7 +75,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 14px;
-    max-width: 200px;
+    width: 200px;
     word-wrap: break-word;
 }
 
@@ -73,6 +83,12 @@ body {
     display: flex;
     padding: 10px;
     background-color: #b1b1b1;
+    position: fixed;
+    bottom: 150px; /* 화면 하단에 고정 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px; /* .chat-window와 동일한 너비 설정 */
+    box-sizing: border-box;
 }
 
 .chat-input input[type="text"] {
@@ -82,7 +98,36 @@ body {
     border-radius: 4px;
 }
 
-.chat-input button {
+.myMessage {
+    justify-content: flex-end;
+}
+
+.myMessage .profile-img {
+    order: 1;
+    margin-left: 10px;
+}
+
+.myMessage .message-content {
+    text-align: right;
+    background-color: #eef7f8;
+    width: 100px;
+}
+
+.yourMessage {
+    justify-content: flex-start;
+}
+
+.yourMessage .profile-img {
+    order: 0;
+    margin-right: 10px;
+}
+
+.yourMessage .message-content {
+    text-align: left;
+    background-color: #ffffff;
+}
+
+.sendbtn {
     margin-left: 10px;
     padding: 8px 12px;
     background-color: #f4f4f4;
@@ -90,4 +135,12 @@ body {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+/* 추가된 타임스탬프 스타일 */
+.timestamp {
+    font-size: 10px;
+    color: #888;
+    margin-left: 5px;
+    align-self: flex-end; /* 타임스탬프를 메시지 하단에 배치 */
 }
